@@ -16,12 +16,7 @@ function Vector() {
   };
 
   Vector.prototype.dot = function ( other ) {
-    var result = new Vector();
-    result._x = this._x * other._x;
-    result._y = this._y * other._y;
-    result._z = this._z * other._z;
-    //result._w = this._w * other._w;
-    return result;
+    return this._x * other._x + this._y * other._y + this._z * other._z;
   };
 
   Vector.prototype.cross = function ( other ) {
