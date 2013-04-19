@@ -1,3 +1,31 @@
+//==============================================================================
+/*
+  https://github.com/andrewgotow/js3D
+
+  Copyright (C) 2013, Andrew Gotow <andrewgotow@gmail.com>
+
+  License: The MIT License (http://www.opensource.org/licenses/mit-license.php)
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+*/
+//==============================================================================
+
 function CanvasController() {
   this._canvas = document.getElementById("mainCanvas");
   this._context = this._canvas.getContext("2d");
@@ -31,7 +59,7 @@ function CanvasController() {
     // Depth test
     if ( this._depthBuffer.data[ pixelInset + 0 ] < depthBuffVal ) {
       // Only write the red channel of the depth buffer... we don't need the rest.
-      this._depthBuffer.data[ pixelInset + 0 ] = depthBuffVal;//((this._cameraFarClip-depth) / this._cameraFarClip) * 255;
+      this._depthBuffer.data[ pixelInset + 0 ] = depthBuffVal;
       // now write the color buffer.
       this._colorBuffer.data[ pixelInset + 0 ] = red;
       this._colorBuffer.data[ pixelInset + 1 ] = green;
@@ -41,9 +69,10 @@ function CanvasController() {
   };
 
   CanvasController.prototype.clearBuffers = function() {
-    //Easiest way to clear the buffer, is just to wipe everything and realloc.
+    //Easiest way to clear the buffer, is just to wipe everything and realloc... although not necessarily the best...
     this._depthBuffer = this._context.createImageData( this._bufferWidth, this._bufferHeight );
     this._colorBuffer = this._context.createImageData( this._bufferWidth, this._bufferHeight );
+    
     //this._context.clearRect( 0, 0, this._canvas.width, this._canvas.height );
   };
 
@@ -51,37 +80,37 @@ function CanvasController() {
     this._context.putImageData( this._colorBuffer, 0, 0 );
   };
 
-  CanvasController.prototype.drawObject = function ( gameObject ) {
-    var normalMat = gameObject.getNormalMatrix();
-    var modelviewMat = gameObject.getTransform();
+  CanvasController.prototype.drawObject = function ( js3DObject ) {
+    var normalMat = js3DObject.getNormalMatrix();
+    var modelviewMat = js3DObject.getTransform();
     var modelviewProjectionMat = multiplyMatrix( modelviewMat, this._projectionMatrix );
 
-    // for each triangle in the gameObject
-    for ( var t = 0; t < gameObject._triangles.length/3; t ++ ) {
-      var indexA = gameObject._triangles[t*3+0];
-      var indexB = gameObject._triangles[t*3+1];
-      var indexC = gameObject._triangles[t*3+2];
+    // for each triangle in the js3DObject
+    for ( var t = 0; t < js3DObject._triangles.length/3; t ++ ) {
+      var indexA = js3DObject._triangles[t*3+0];
+      var indexB = js3DObject._triangles[t*3+1];
+      var indexC = js3DObject._triangles[t*3+2];
 
       var A = new Vector();
-      A.set( gameObject._vertices[ indexA*3 + 0 ], gameObject._vertices[ indexA*3 + 1 ], gameObject._vertices[ indexA*3 + 2 ] );
+      A.set( js3DObject._vertices[ indexA*3 + 0 ], js3DObject._vertices[ indexA*3 + 1 ], js3DObject._vertices[ indexA*3 + 2 ] );
 
       var B = new Vector();
-      B.set( gameObject._vertices[ indexB*3 + 0 ], gameObject._vertices[ indexB*3 + 1 ], gameObject._vertices[ indexB*3 + 2 ] );
+      B.set( js3DObject._vertices[ indexB*3 + 0 ], js3DObject._vertices[ indexB*3 + 1 ], js3DObject._vertices[ indexB*3 + 2 ] );
      
       var C = new Vector();
-      C.set( gameObject._vertices[ indexC*3 + 0 ], gameObject._vertices[ indexC*3 + 1 ], gameObject._vertices[ indexC*3 + 2 ] );
+      C.set( js3DObject._vertices[ indexC*3 + 0 ], js3DObject._vertices[ indexC*3 + 1 ], js3DObject._vertices[ indexC*3 + 2 ] );
      
       var NormalA = new Vector();
-      NormalA.set( gameObject._normals[ indexA*3 + 0 ], gameObject._normals[ indexA*3 + 1 ], gameObject._normals[ indexA*3 + 2 ] );
+      NormalA.set( js3DObject._normals[ indexA*3 + 0 ], js3DObject._normals[ indexA*3 + 1 ], js3DObject._normals[ indexA*3 + 2 ] );
       var NormalB = new Vector();
-      NormalB.set( gameObject._normals[ indexB*3 + 0 ], gameObject._normals[ indexB*3 + 1 ], gameObject._normals[ indexB*3 + 2 ] );
+      NormalB.set( js3DObject._normals[ indexB*3 + 0 ], js3DObject._normals[ indexB*3 + 1 ], js3DObject._normals[ indexB*3 + 2 ] );
       var NormalC = new Vector();
-      NormalC.set( gameObject._normals[ indexC*3 + 0 ], gameObject._normals[ indexC*3 + 1 ], gameObject._normals[ indexC*3 + 2 ] );
+      NormalC.set( js3DObject._normals[ indexC*3 + 0 ], js3DObject._normals[ indexC*3 + 1 ], js3DObject._normals[ indexC*3 + 2 ] );
 
 
       var color = new Vector();
       color.set( 255, 0, 0 );
-      //color.set( gameObject._colors[ t*4 + 0 ], gameObject._colors[ t*4 + 1 ], gameObject._colors[ t*4 + 2 ] );
+      //color.set( js3DObject._colors[ t*4 + 0 ], js3DObject._colors[ t*4 + 1 ], js3DObject._colors[ t*4 + 2 ] );
 
       // Make the draw call.
       this.drawTriangle( modelviewProjectionMat, normalMat, A, B, C, NormalA, NormalB, NormalC, color );

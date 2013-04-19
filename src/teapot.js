@@ -1,5 +1,5 @@
 var model_teapot_vertices = [
-0,0,0, // triangle indices start at 1, so just add a null triangle.
+0,0,0, // triangle indices start at 1, so just add a degenerate triangle.
 -3.000000,1.800000,0.000000,
 -2.991600,1.800000,-0.081000,
 -2.991600,1.800000,0.081000,
